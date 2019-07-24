@@ -1,0 +1,31 @@
+eureka:
+  instance:
+    hostname: providersClient2
+    prefer-ip-address: true #如果基于Docker等容器的部署，容器会生成一个随机的主机名，此时DNS不存在该名
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/ #admin:123456@
+server:
+  port: 8002
+spring:
+  application:
+    name: test1-eureka-providersClient2
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /test
+    username: xiaozhang
+    password: 123456
+  zipkin:
+    base-url: http://localhost:9411
+    sleuth:
+      sampler:
+        # 采样率，模式0.1，也就是10%，为了便于观察效果，改为1.0，也就是100%。生产环境建议保持默认。
+        probability: 1.0
+feign:
+  hystrix:
+    enabled: true #开启功能，默认false
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.sleuth: DEBUG

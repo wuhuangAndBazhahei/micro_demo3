@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="net.huayiyun.eureka_client.mapper.BloodGlucoseMapper">
+
+    <!--返回血糖数据列表-->
+    <resultMap id="listBloodGlucoseMap" type="net.huayiyun.eureka_client.pojo.po.ListBloodGlucosePo">
+        <result column="bg_id" property="bgId" jdbcType="VARCHAR"/>
+        <result column="patient_id" property="patientId" jdbcType="VARCHAR"/>
+        <result column="blood_glucose_level" property="bloodGlucoseLevel" jdbcType="DOUBLE"/>
+        <result column="time_point" property="timePoint" jdbcType="VARCHAR"/>
+        <result column="operator_id" property="operatorId" jdbcType="VARCHAR"/>
+        <result column="receive_time" property="receiveTime" jdbcType="VARCHAR"/>
+        <result column="is_del" property="bgIsDel" jdbcType="INTEGER"/>
+        <result column="value" property="timePointValue" jdbcType="VARCHAR" />
+    </resultMap>
+    <!--返回血糖数据-->
+    <resultMap id="bloodGlucoseMap" type="net.huayiyun.eureka_client.pojo.po.BloodGlucosePo">
+        <result column="bg_id" property="bgId" jdbcType="VARCHAR"/>
+        <result column="patient_id" property="patientId" jdbcType="VARCHAR"/>
+        <result column="blood_glucose_level" property="bloodGlucoseLevel" jdbcType="DOUBLE"/>
+        <result column="time_point" property="timePoint" jdbcType="VARCHAR"/>
+        <result column="operator_id" property="operatorId" jdbcType="VARCHAR"/>
+        <result column="receive_time" property="receiveTime" jdbcType="VARCHAR"/>
+        <result column="is_del" property="bgIsDel" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <!--血糖列表sql-->
+    <sql id="bloodGlucoseColumn">
+        nbg.bg_id,nbg.patient_id,nbg.blood_glucose_level,nbg.time_point,nbg.operator_id,
+        date_format(nbg.receive_time,'%Y-%m-%d %H:%i:%S') receive_time,nbg.is_del
+    </sql>
+
+    <!--添加血糖数据-->
+    <insert id="insertBloodGlucose" parameterType="net.huayiyun.eureka_client.pojo.qo.BloodGlucoseQo">
+        INSERT INTO data_blood_glucose
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bgId!=null">
+                bg_id,
+            </if>
+            <if test="patientId !=null">
+                patient_id,
+            </if>
+            <if test="bloodGlucoseLevel !=null">
+                blood_glucose_level,
+            </if>
+            <if test="operatorId !=null">
+                operator_id,
+            </if>
+            <if test="receiveTime !=null">
+                receive_time,
+            </if>
+            <if test="bgIsDel !=null">
+                is_del,
+            </if>
+            <if test="timePoint !=null">
+                time_point
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bgId!=null">
+                #{bgId,jdbcType=VARCHAR},
+            </if>
+            <if test="patientId !=null">
+                #{patientId,jdbcType=VARCHAR},
+            </if>
+            <if test="bloodGlucoseLevel !=null">
+                #{bloodGlucoseLevel,jdbcType=DOUBLE},
+            </if>
+            <if test="operatorId !=null">
+                #{operatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="receiveTime !=null">
+                #{receiveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="bgIsDel !=null">
+                #{bgIsDel,jdbcType=INTEGER},
+            </if>
+            <if test="timePoint !=null">
+                #{timePoint,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+
+    <!--查询血糖数据列表-->
+    <select id="listBloodGlucose" parameterType="net.huayiyun.eureka_client.pojo.qo.BloodGlucoseQo"
+            resultMap="listBloodGlucoseMap">
+        SELECT <include refid="bloodGlucoseColumn" />,sd.value
+        FROM data_blood_glucose AS nbg
+        LEFT JOIN (SELECT value,code FROM sys_dictionary  WHERE type = 'Time Point') AS sd
+        ON nbg.time_point=sd.code
+        <where>
+            <if test="patientId !=null and patientId !=''">
+                and nbg.patient_id = #{patientId,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and endTime!=null">
+                and nbg.receive_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+                and nbg.receive_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="timePoint !=null">
+                and time_point = #{timePoint,jdbcType=VARCHAR}
+            </if>
+                and nbg.is_del = 0
+        </where>
+        order by nbg.receive_time desc
+        limit #{startNumber,jdbcType=INTEGER},#{rows,jdbcType=INTEGER}
+    </select>
+
+    <!--查询血糖数量-->
+    <select id="countBloodGlucose" parameterType="net.huayiyun.eureka_client.pojo.qo.BloodGlucoseQo" resultType="java.lang.Integer" >
+        SELECT count(1) FROM data_blood_glucose
+        <where>
+            <if test="patientId !=null and patientId !=''">
+                and patient_id = #{patientId,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime!=null and endTime!=null">
+                and receive_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+                and receive_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="timePoint !=null">
+                and time_point = #{timePoint,jdbcType=VARCHAR}
+            </if>
+            and is_del = 0
+        </where>
+    </select>
+
+
+
+
+</mapper>

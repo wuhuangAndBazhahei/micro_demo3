@@ -1,0 +1,56 @@
+eureka:
+  instance:
+    hostname: providersClient
+    prefer-ip-address: true #如果基于Docker等容器的部署，容器会生成一个随机的主机名，此时DNS不存在该名
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/ #admin:123456@
+server:
+  port: 8001
+spring:
+  application:
+    name: test1-eureka-providersClient1
+  data:
+    #mongodb
+    mongodb:
+      uri: mongodb://admin:123456@127.0.0.1:27017/ #不配置报错！！
+      host: 127.0.0.1
+      port: 27017
+      authentication-database: admin
+      username: admin
+      password: 123456
+      database: testMongo1
+      option: #mongo-plus jar 提供的可对连接数进行配置，采用了默认配置
+        connect-timeout: 10000
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      # 采样率，模式0.1，也就是10%，为了便于观察效果，改为1.0，也就是100%。生产环境建议保持默认。
+      probability: 1.0
+  #Redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    timeout: 3000 #连接超时时间
+    jedis:
+      pool:
+        max-active: 20
+        max-wait: 30000  #最大阻塞等待时间（不限制）
+        max-idle: 5 #最大空闲连接数
+        min-idle: 1 #最小空闲连接数
+  #rabbitmq
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /test
+    username: xiaozhang
+    password: 123456
+mybatis:
+  mapper-locations: classpath:mapper/*.xml #mapper/**/*.xml
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.sleuth: DEBUG
+

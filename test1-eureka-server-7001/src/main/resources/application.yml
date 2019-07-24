@@ -1,0 +1,36 @@
+#spring.security.user.name=root
+#spring.security.user.password=123456
+server:
+  port: 7001
+spring:
+  application:
+    name: test1-eureka-server1
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    locale: zh_CN
+    time-zone: GMT+8
+  #security:
+    #user:
+      #name: admin
+      #password: 123456
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  server:
+    #### 清理间隔（单位毫秒，默认是60*1000），开发环境设置如下可快速移除不可用的服务
+    eviction-interval-timer-in-ms: 5000
+    enable-self-preservation: false
+    # 自我保护机制，默认true。打开后，心跳失败在15分钟内低于85%(renewalPercentThreshold)的服务，也不进行剔除。
+    # 关闭后，主页提示：RENEWALS ARE LESSER THAN THE THRESHOLD. THE SELF PRESERVATION MODE IS TURNED OFF.
+    # THIS MAY NOT PROTECT INSTANCE EXPIRY IN CASE OF NETWORK/OTHER PROBLEMS.
+    #enable-self-preservation: true # 本地调试时可fasle关闭。但生产建议打开，可防止因网络不稳定等原因导致误剔除服务。
+    #renewal-percent-threshold: 0.85 #默认85%
+  client:
+    register-with-eureka: false  # 是否注册到eureka服务，默认为true，当前已为eureka server，且单点eureka，故配置为false
+    fetch-registry: false # 是否在本地缓存注册表信息，默认为true，当前为单点eureka server，不需要从其他eureka除获取注册表信息，更谈不上缓存，故配置为false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      #defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@${eureka.instance.hostname}:${server.port}/eureka/
+

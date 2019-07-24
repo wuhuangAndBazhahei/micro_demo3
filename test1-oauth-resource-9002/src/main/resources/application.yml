@@ -1,0 +1,18 @@
+server:
+  port: 9002
+  servlet:
+    contextPath: /hy #web基路径
+eureka:
+  instance:
+    hostname: OauthResourceServer
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/ #admin:123456@
+spring:
+  application:
+    name: test1-oauth-resource-9002
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.sleuth: DEBUG

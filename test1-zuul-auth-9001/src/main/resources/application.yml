@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: test1-zuul-auth-server
+server:
+  port: 9001
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7001/eureka/ #admin:123456@
+  instance:
+    prefer-ip-address: true
+zuul:
+  sensitiveHeaders: Cookie,Set-Cookie #默认是隐私权限信息不传递，导致服务间调用出错
+  routes:
+    test1-eureka-providersClient1:
+      path: /client1/**
+      serviceId: test1-eureka-providersClient1
+    test1-eureka-providersClient2:
+      path: /client2/**
+      serviceId: test1-eureka-providersClient2
+security:
+  oauth2:
+    client:
+      access-token-uri: http://localhost:9002/hy/oauth/token #令牌端点
+      user-authorization-uri: http://localhost:9002/hy/oauth/authorize #授权端点
+      client-id: test1-zuul-auth-server #OAuth2客户端ID
+      client-secret: hy_secret #OAuth2客户端密钥
+    resource:
+      jwt:
+        key-value: hy_jwt #使用对称加密方式，默认算法为HS256
