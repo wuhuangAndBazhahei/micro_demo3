@@ -21,7 +21,7 @@
         <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
         <druid-starter.version>1.1.16</druid-starter.version>
         <mybatis-spring>2.0.1</mybatis-spring>
-        <fastjson.version>1.2.49</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
 
     </properties>
 
